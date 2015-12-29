@@ -5,7 +5,7 @@
   "main": "worker.js",
   "scripts": {
     "compile": "babel src --out-dir .",
-    "prepublish": "npm run compile",
+    "prepublish": "in-publish && npm run compile",
     "test": "standard src && babel-tape-runner test/*.js | tap-spec"
   },
   "repository": {
@@ -32,11 +32,11 @@
     "node-resque": "^1.1.3"
   },
   "devDependencies": {
-    "babel": "^6.3.26",
     "babel-eslint": "^5.0.0-beta6",
     "babel-plugin-rewire": "https://github.com/TheSavior/babel-plugin-rewire-es5.git#54395b3af6d21d511bc1db4aba4fbd4a542d5594",
     "babel-preset-es2015": "^6.3.13",
     "babel-tape-runner": "^2.0.0",
+    "in-publish": "^2.0.0",
     "rewire": "^2.5.1",
     "rimraf": "^2.4.5",
     "standard": "^5.4.1",
