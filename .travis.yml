@@ -3,7 +3,8 @@ node_js:
   - "4.2"
 sudo: false
 cache:
-  - node_modules
+  directories:
+   - node_modules
 script:
   - npm test
 services:
