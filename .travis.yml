@@ -10,3 +10,7 @@ services:
   - redis-server
 env:
   - NODE_ENV=test
+addons:
+  apt:
+    packages:
+    - gdal-bin
