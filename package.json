@@ -1,0 +1,49 @@
+{
+  "name": "koop-worker",
+  "version": "0.0.0",
+  "description": "Worker for Koop jobs",
+  "main": "worker.js",
+  "scripts": {
+    "compile": "babel src --out-dir .",
+    "prepublish": "npm run compile",
+    "test": "standard src && babel-tape-runner test/*.js | tap-spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koopjs/koop-worker.git"
+  },
+  "keywords": [
+    "koop",
+    "jobs"
+  ],
+  "author": "Daniel Fenton <dfenton@esri.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/koopjs/koop-worker/issues"
+  },
+  "homepage": "https://github.com/koopjs/koop-worker#readme",
+  "dependencies": {
+    "geo-xform": "^1.0.1",
+    "highland": "^2.5.1",
+    "ioredis": "^1.13.1",
+    "koop": "^2.11.0",
+    "koop-pgcache": "^1.6.1",
+    "lodash": "^3.10.1",
+    "node-resque": "^1.1.3"
+  },
+  "devDependencies": {
+    "babel-core": "^6.3.21",
+    "babel-eslint": "^5.0.0-beta6",
+    "babel-plugin-rewire": "https://github.com/TheSavior/babel-plugin-rewire-es5.git#54395b3af6d21d511bc1db4aba4fbd4a542d5594",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-tape-runner": "^2.0.0",
+    "rewire": "^2.5.1",
+    "rimraf": "^2.4.5",
+    "standard": "^5.4.1",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.2.2"
+  },
+  "standard": {
+    "parser": "babel-eslint"
+  }
+}
