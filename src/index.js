@@ -1,3 +1,4 @@
+/* @flow */
 const config = require('config')
 const NR = require('node-resque')
 const lodash = require('lodash')
@@ -11,14 +12,14 @@ const connection = {
 }
 const redis = new Redis(connection)
 
-const xform = require('./jobs/xform')
+const xport = require('./jobs/xport')
 const copy = require('./jobs/copy')
 
 const jobs = {
-  xform: {
+  xport: {
     perform: (job, done) => {
       const options = lodash.cloneDeep(job)
-      xform(options, done)
+      xport(options, done)
     }
   },
   copy: {

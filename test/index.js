@@ -16,7 +16,7 @@ const redis = new Redis(connection)
 
 const worker = require('../src')
 
-test('Run an xform job that succeeds', t => {
+test('Run an xport job that succeeds', t => {
   t.plan(2)
   const options = {
     id: 'f445febc447d4cb696e71ea7816d65d5',
@@ -28,7 +28,7 @@ test('Run an xform job that succeeds', t => {
   }
   queue.connect(() => {
     redis.subscribe('jobs', () => {
-      queue.enqueue('koop', 'xform', options)
+      queue.enqueue('koop', 'xport', options)
       redis.once('message', (channel, message) => {
         const info = JSON.parse(message)
         t.equal(info.status, 'started')

@@ -1,6 +1,6 @@
 const test = require('tape')
 const rewire = require('rewire')
-const xform = rewire('../src/jobs/xform')
+const xport = rewire('../src/jobs/xport')
 const fs = require('fs')
 const _ = require('highland')
 const rimraf = require('rimraf')
@@ -15,7 +15,7 @@ test('Transform data when geojson already exists', t => {
     name: 'test',
     path: './test/output'
   }
-  xform(options, err => {
+  xport(options, err => {
     t.error(err, 'No error')
     const rows = []
     _(fs.createReadStream(fileLoc(options)))
@@ -31,8 +31,8 @@ test('Set up feature stream mock', t => {
     return _(fs.createReadStream('./test/fixtures/features.txt')).split().compact()
   }
   function exists (a, b, callback) { callback(false) }
-  xform.__set__('koop.Cache.createStream', createStream)
-  xform.__set__('koop.files.exists', exists)
+  xport.__set__('koop.Cache.createStream', createStream)
+  xport.__set__('koop.files.exists', exists)
   t.end()
 })
 
@@ -46,7 +46,7 @@ test('Transform data and save geojson when geojson does not exist', t => {
     name: 'test',
     path: './test/output'
   }
-  xform(options, err => {
+  xport(options, err => {
     t.error(err, 'No error')
 
     const path = fileLoc(options)
@@ -73,7 +73,7 @@ test('Transform data directly into geojson', t => {
     name: 'test',
     path: './test/output'
   }
-  xform(options, err => {
+  xport(options, err => {
     t.error(err, 'No error')
     const path = fileLoc(options)
     const geojson = fs.readFileSync(path)

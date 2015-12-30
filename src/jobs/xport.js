@@ -1,4 +1,4 @@
-
+/* @flow */
 const path = require('path')
 const config = require('config')
 
@@ -14,7 +14,7 @@ if (config.cache !== 'local') {
 const GeoXForm = require('geo-xform')
 const _ = require('highland')
 
-function xform (options, done) {
+function xport (options, done) {
   options.filePath = path.join('files', `/${options.id}_${options.layer || 0}`, options.key)
   const fileName = `${options.name}.geojson`
   options.geojsonPath = path.join(options.filePath, fileName)
@@ -85,4 +85,4 @@ function createCacheStream (options) {
   return output
 }
 
-module.exports = xform
+module.exports = xport
