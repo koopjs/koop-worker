@@ -27,6 +27,7 @@
     "highland": "^2.5.1",
     "ioredis": "^1.13.1",
     "koop": "^2.12.0",
+    "koop-logger": "^1.0.0",
     "koop-pgcache": "^1.6.1",
     "lodash": "^3.10.1",
     "node-resque": "^1.1.3"

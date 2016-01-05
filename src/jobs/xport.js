@@ -8,7 +8,7 @@ const koop = createKoop(config)
 const log = koop.log
 if (config.cache !== 'local') {
   const cache = require('koop-pgcache')
-  koop.registerCache(cache)
+  koop.register(cache)
 }
 
 const GeoXForm = require('geo-xform')
