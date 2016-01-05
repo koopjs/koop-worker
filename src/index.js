@@ -38,27 +38,28 @@ worker.connect(() => {
 let heartbeat
 
 worker.on('job', (queue, job) => {
+  fmtLog('Working on', job)
   publish('start', job)
   heartbeat = setInterval(() => {
-    log.info('Working on', job)
+    fmtLog('Working on', job)
     publish('progress', job)
   }, 5000)
 })
 
 worker.on('success', (queue, job) => {
-  log.info('Job finished', job)
+  fmtLog('Job finished', job)
   clearInterval(heartbeat)
   publish('finish', job)
 })
 
 worker.on('failure', (queue, job, error) => {
-  log.error('Job failed', job, error)
+  fmtLog('Job failed', job, error)
   clearInterval(heartbeat)
   publish('fail', job, error)
 })
 
 worker.on('error', (queue, job, error) => {
-  log.error('Job failed: Process shutting down', job, error)
+  fmtLog('Job failed: Process shutting down', job, error)
   clearInterval(heartbeat)
   publish('fail', job, error)
   // if we've landed here an error was caught in domain
@@ -66,7 +67,7 @@ worker.on('error', (queue, job, error) => {
   worker.end(() => process.exit())
 })
 
-worker.on('start', () => console.log('Worker started'))
+worker.on('start', () => log.info('Worker started'))
 
 worker.on('end', () => {
   log.info('Worker shutting down')
@@ -75,7 +76,6 @@ worker.on('end', () => {
 })
 
 function publish (status, job, error) {
-  console.log(job)
   let id
   if (job.args && job.args.length) {
     job = job.args[0]
@@ -83,6 +83,20 @@ function publish (status, job, error) {
   }
   const info = JSON.stringify({id, status, job, error})
   redis.publish('jobs', info)
+}
+
+function fmtLog (msg, job, error) {
+  if (error) log.error(msg, fmtJob(job), fmtError(error))
+  else log.info(msg, fmtJob(job))
+}
+
+function fmtJob (job) {
+  if (job.args && job.args.length) return job.args[0]
+  else return job
+}
+
+function fmtError (error) {
+  return error.stack.match(/.+\n.+[^\n]/)[0]
 }
 
 process.on('SIGINT', () => {
