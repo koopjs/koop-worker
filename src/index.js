@@ -53,18 +53,19 @@ worker.on('success', (queue, job) => {
 })
 
 worker.on('failure', (queue, job, error) => {
-  fmtLog('Job failed', job, error)
-  clearInterval(heartbeat)
-  publish('fail', job, error)
-})
-
-worker.on('error', (queue, job, error) => {
-  fmtLog('Job failed: Process shutting down', job, error)
+  if (!error.domainThrow) fmtLog('Job failed', job, error)
   clearInterval(heartbeat)
   publish('fail', job, error)
   // if we've landed here an error was caught in domain
   // rather than potentially leak resources we just shut down
-  worker.end(() => process.exit())
+  if (error.domainThrown) {
+    fmtLog('Worker failed in unknown state, shutting down', job, error)
+    worker.end(() => process.exit())
+  }
+})
+
+worker.on('error', (queue, job, error) => {
+  fmtLog('Worker emitted error', job, error)
 })
 
 worker.on('start', () => log.info('Worker started'))
@@ -77,7 +78,7 @@ worker.on('end', () => {
 
 function publish (status, job, error) {
   let id
-  if (job.args && job.args.length) {
+  if (job && job.args && job.args.length) {
     job = job.args[0]
     id = job.job_id
   }
@@ -91,11 +92,12 @@ function fmtLog (msg, job, error) {
 }
 
 function fmtJob (job) {
-  if (job.args && job.args.length) return job.args[0]
+  if (job && job.args && job.args.length) return job.args[0]
   else return job
 }
 
 function fmtError (error) {
+  if (!error || !error.stack) return ''
   return error.stack.match(/.+\n.+[^\n]/)[0]
 }
 

@@ -1,3 +1,6 @@
+/* @flow */
+'use strict'
+
 const test = require('tape')
 const rewire = require('rewire')
 const xport = rewire('../src/jobs/xport')
@@ -31,7 +34,7 @@ test('Set up feature stream mock', t => {
     return _(fs.createReadStream('./test/fixtures/features.txt')).split().compact()
   }
   function exists (a, b, callback) { callback(false) }
-  xport.__set__('koop.Cache.createStream', createStream)
+  xport.__set__('koop.cache.createStream', createStream)
   xport.__set__('koop.files.exists', exists)
   t.end()
 })

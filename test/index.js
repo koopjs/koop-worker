@@ -1,3 +1,5 @@
+/* @flow */
+'use strict'
 const test = require('tape')
 const NR = require('node-resque')
 const config = require('config')
