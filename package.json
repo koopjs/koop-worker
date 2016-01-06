@@ -1,8 +1,8 @@
 {
   "name": "koop-worker",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Worker for Koop jobs",
-  "main": "worker.js",
+  "main": "index.js",
   "scripts": {
     "compile": "babel src --out-dir .",
     "test": "standard src && babel-tape-runner test/*.js | tap-spec"
