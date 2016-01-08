@@ -82,7 +82,15 @@ function publish (status, job, error) {
     job = job.args[0]
     id = job.job_id
   }
-  const info = JSON.stringify({id, status, job, error})
+  let errorReport
+  if (error) {
+    errorReport = {
+      message: error.message,
+      code: error.code,
+      time: error.time
+    }
+  }
+  const info = JSON.stringify({id, status, job, errorReport})
   redis.publish('jobs', info)
 }
 
