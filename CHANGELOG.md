@@ -2,11 +2,15 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.0.2] 2016-01-08
+## [0.0.3] - 2016-01-12
+### Fixed
+* Require Koop > 3.0
+
+## [0.0.2] - 2016-01-08
 ### Fixed
 * Removed case of trying to JSON.stringify circular object
 
-## [0.0.1] 2016-01-07
+## [0.0.1] - 2016-01-07
 ### Added
 * First release
 
