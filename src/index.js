@@ -9,17 +9,17 @@ const redis = new Redis(connection)
 const Logger = require('koop-logger')
 const log = new Logger(config)
 
-const xport = require('./jobs/xport')
-const copy = require('./jobs/copy')
+const exportFile = require('./jobs/exportFile')
+const copy = require('./jobs/copyFile')
 
 const jobs = {
-  xport: {
+  exportFile: {
     perform: (job, done) => {
       const options = lodash.cloneDeep(job)
-      xport(options, done)
+      exportFile(options, done)
     }
   },
-  copy: {
+  copyFile: {
     perform: (job, done) => {
       const options = lodash.cloneDeep(job)
       copy(options, done)

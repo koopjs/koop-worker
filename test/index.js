@@ -18,7 +18,7 @@ test('Set up', t => {
   })
 })
 
-test('Run an xport job that succeeds', t => {
+test('Run an exportFile job that succeeds', t => {
   t.plan(4)
   const options = {
     id: 'f445febc447d4cb696e71ea7816d65d5',
@@ -30,7 +30,7 @@ test('Run an xport job that succeeds', t => {
     job_id: 'job_id'
   }
   redis.subscribe('jobs', () => {
-    queue.enqueue('koop', 'xport', options)
+    queue.enqueue('koop', 'exportFile', options)
     redis.once('message', (channel, message) => {
       const info = JSON.parse(message)
       t.equal(info.status, 'start', 'Start emitted')
@@ -44,7 +44,7 @@ test('Run an xport job that succeeds', t => {
   })
 })
 
-test('Run an xport job that fails', t => {
+test('Run an exportFile job that fails', t => {
   t.plan(4)
   const options = {
     id: 'foo',
@@ -56,7 +56,7 @@ test('Run an xport job that fails', t => {
     job_id: 'job_id2'
   }
   redis.subscribe('jobs', () => {
-    queue.enqueue('koop', 'xport', options)
+    queue.enqueue('koop', 'exportFile', options)
     redis.once('message', (channel, message) => {
       const info = JSON.parse(message)
       t.equal(info.status, 'start', 'Start emitted')
