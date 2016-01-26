@@ -30,11 +30,13 @@ function xport (options, done) {
 
 function xformOnly (options, done) {
   const fileName = options.geojsonPath.replace(/(?!\S+\.)geojson/, options.format)
+  const transform = GeoXForm.createStream(options.format, options)
   const output = koop.files.createWriteStream(fileName)
+
   koop.files.createReadStream(options.geojsonPath)
   .on('log', l => log[l.level](l.message))
   .on('error', e => done(e))
-  .pipe(GeoXForm.createStream(options.format, options))
+  .pipe(transform)
   .on('log', l => log[l.level](l.message))
   .on('error', e => done(e))
   .pipe(output)
@@ -52,14 +54,16 @@ function xformAndSave (options, done) {
   // we can pipe the geojson straight to S3 while transformations are in progress
   // that way we can reuse the geojson rather than hitting the database again
   cacheStream
-  .observe()
+  .fork()
   .pipe(geojsonOut)
   .on('error', e => log.error(e))
 
   cacheStream
+	.fork()
   .pipe(GeoXForm.createStream(options.format, options))
   .on('error', e => done(e))
   .on('log', l => log[l.level](l.message))
+	.on('data', () => console.log('data coming through the pipe'))
   .pipe(output)
   .on('log', l => log[l.level](l.message))
   .on('error', e => done(e))
