@@ -1,6 +1,6 @@
 {
   "name": "koop-worker",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Worker for Koop jobs",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,7 @@
   "dependencies": {
     "config": "^1.17.1",
     "geo-xform": "^1.0.1",
-    "highland": "^2.5.1",
+    "highland": "^2.6.0",
     "ioredis": "^1.13.1",
     "koop": "^3.0.0-alpha",
     "koop-logger": "^1.0.0",
