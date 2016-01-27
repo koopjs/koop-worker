@@ -22,6 +22,7 @@ function exportFile (options, done) {
   koop.files.exists(options.filePath, geojson, exists => {
     log.info('GeoJSON exists:', exists, options)
     const source = exists ? koop.files.createReadStream(`${options.filePath}/${geojson}`) : createCacheStream(options)
+    options.tempPath = config.data_dir
     // noop or true transform
     const transform = options.format === 'geojson' ? _() : GeoXForm.createStream(options.format, options)
     const output = koop.files.createWriteStream(`${options.filePath}/${options.name}.${options.format}`)

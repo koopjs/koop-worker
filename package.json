@@ -1,6 +1,6 @@
 {
   "name": "koop-worker",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Worker for Koop jobs",
   "main": "index.js",
   "scripts": {
@@ -40,4 +40,4 @@
     "tap-spec": "^4.1.1",
     "tape": "^4.2.2"
   }
-} 
+}
