@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.2.0] - 2016-03-15
 ### Added
 * Clean shutdown on SIGTERM
 
@@ -32,6 +32,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * First release
 
+[0.2.0]: https://github.com/koopjs/koop-worker/compare/v0.1.1..v0.2.0
 [0.1.1]: https://github.com/koopjs/koop-worker/compare/v0.1.0..v0.1.1
 [0.1.0]: https://github.com/koopjs/koop-worker/compare/v0.0.4..v0.1.0
 [0.0.4]: https://github.com/koopjs/koop-worker/compare/v0.0.3..v0.0.4
