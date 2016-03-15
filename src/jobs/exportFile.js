@@ -17,11 +17,11 @@ const _ = require('highland')
 
 function exportFile (options, callback) {
   let source
-  const output = koop.files.createWriteStream(`${options.filePath}/${options.name}.${options.format}`)
   let finished = false
   // TODO ya gotta fix this d00d
   if (!options.filePath) options.filePath = path.join('files', `/${options.id}_${options.layer || 0}`, options.key)
   const geojson = `${options.name}.geojson`
+  const output = koop.files.createWriteStream(`${options.filePath}/${options.name}.${options.format}`)
   koop.files.exists(options.filePath, geojson, exists => {
     log.info('GeoJSON exists:', exists, options)
     source = exists ? koop.files.createReadStream(`${options.filePath}/${geojson}`) : createCacheStream(options)
