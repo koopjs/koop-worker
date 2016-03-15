@@ -81,6 +81,25 @@ test('Transform data directly into geojson', t => {
   })
 })
 
+test('Transform data from legacy geojson', t => {
+  t.plan(2)
+  const options = {
+    id: 'test',
+    layer: 1,
+    key: 'test',
+    format: 'geojson',
+    name: 'test',
+    path: './test/output'
+  }
+  exportFile(options, err => {
+    t.error(err, 'No error')
+    const path = fileLoc(options)
+    const geojson = fs.readFileSync(path)
+    const features = JSON.parse(geojson).features
+    t.equal(features.length, 100, 'GeoJSON has all expected features')
+  })
+})
+
 test('Teardown', t => {
   rimraf.sync('./test/output')
   rimraf.sync('./test/data/files/f445febc447d4cb696e71ea7816d65d5_0/test_0')

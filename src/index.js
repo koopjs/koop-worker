@@ -12,11 +12,13 @@ const log = new Logger(config)
 const exportFile = require('./jobs/exportFile')
 const copy = require('./jobs/copyFile')
 
+let running
+
 const jobs = {
   exportFile: {
     perform: (job, done) => {
       const options = lodash.cloneDeep(job)
-      exportFile(options, done)
+      running = exportFile(options, done)
     }
   },
   copyFile: {
@@ -114,7 +116,9 @@ process.on('SIGINT', () => {
 })
 
 process.on('SIGTERM', () => {
-  worker.end(() => process.exit())
+  running.abort(() => {
+    worker.end(() => process.exit())
+  })
 })
 
 module.exports = worker

@@ -15,29 +15,41 @@ if (config.cache !== 'local') {
 const GeoXForm = require('geo-xform')
 const _ = require('highland')
 
-function exportFile (options, done) {
+function exportFile (options, callback) {
+  let source
+  const output = koop.files.createWriteStream(`${options.filePath}/${options.name}.${options.format}`)
+  let finished = false
   // TODO ya gotta fix this d00d
   if (!options.filePath) options.filePath = path.join('files', `/${options.id}_${options.layer || 0}`, options.key)
   const geojson = `${options.name}.geojson`
   koop.files.exists(options.filePath, geojson, exists => {
     log.info('GeoJSON exists:', exists, options)
-    const source = exists ? koop.files.createReadStream(`${options.filePath}/${geojson}`) : createCacheStream(options)
+    source = exists ? koop.files.createReadStream(`${options.filePath}/${geojson}`) : createCacheStream(options)
     options.tempPath = config.data_dir
     // noop or true transform
     const transform = options.format === 'geojson' ? _() : GeoXForm.createStream(options.format, options)
-    const output = koop.files.createWriteStream(`${options.filePath}/${options.name}.${options.format}`)
-
     source
     .on('log', l => log[l.level](l.message))
-    .on('error', e => done(e))
+    .on('error', e => finish(e))
     .pipe(transform)
     .on('log', l => log[l.level](l.message))
-    .on('error', e => done(e))
+    .on('error', e => finish(e))
     .pipe(output)
     .on('log', l => log[l.level](l.message))
-    .on('error', e => done(e))
-    .on('finish', () => done())
+    .on('error', e => finish(e))
+    .on('finish', () => finish())
   })
+  return {
+    abort: function abort (callback) {
+      output.abort()
+      finish(new Error('SIGTERM'))
+      callback()
+    }
+  }
+  function finish (error) {
+    if (!finished) callback(error)
+    finished = true
+  }
 }
 
 function createCacheStream (options) {
