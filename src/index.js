@@ -8,6 +8,7 @@ const connection = config.queue.connection
 const redis = new Redis(connection)
 const Logger = require('koop-logger')
 const log = new Logger(config)
+const retry = require('./plugins/retry')
 
 const exportFile = require('./jobs/exportFile')
 const copy = require('./jobs/copyFile')
@@ -19,6 +20,13 @@ const jobs = {
     perform: (job, done) => {
       const options = lodash.cloneDeep(job)
       running = exportFile(options, done)
+    },
+    plugins: [retry],
+    pluginOptions: {
+      retry: {
+        retryLimit: 3,
+        retryDelay: 5000
+      }
     }
   },
   copyFile: {
@@ -50,8 +58,8 @@ worker.on('job', (queue, job) => {
 
 worker.on('success', (queue, job) => {
   fmtLog('Job finished', job)
-  clearInterval(heartbeat)
   publish('finish', job)
+  clearInterval(heartbeat)
 })
 
 worker.on('failure', (queue, job, error) => {
@@ -102,8 +110,10 @@ function fmtLog (msg, job, error) {
 }
 
 function fmtJob (job) {
-  if (job && job.args && job.args.length) return job.args[0]
-  else return job
+  var logable
+  if (job && job.args && job.args.length) logable = job.args[0]
+  else logable = job
+  return lodash.omit(logable, 'metadata')
 }
 
 function fmtError (error) {

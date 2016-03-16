@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+* Export jobs are retried 3 times
+
 ## [0.2.0] - 2016-03-15
 ### Added
 * Clean shutdown on SIGTERM
@@ -13,7 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.1.0] - 2016-01-26
 ### Changed
 * `Rename xport to ExportFile`
-* Remove simeltaneous geojson + transform writing
+* Remove simultaneous GeoJSON + transform writing
 * Refactor exortFile internals
 
 ## [0.0.4] - 2016-01-26
