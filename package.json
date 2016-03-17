@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/koopjs/koop-worker#readme",
   "dependencies": {
-    "config": "^1.17.1",
+    "config": "^1.19.0",
     "geo-xform": "^1.0.1",
     "highland": "3.0.0-beta.1",
     "ioredis": "^1.13.1",

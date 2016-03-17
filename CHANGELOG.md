@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.3.1] - 2016-03-17
+### Changed
+* Upgrade config package
+
 ## [0.3.0] - 2016-03-16
 ### Added
 * Export jobs are retried 3 times
@@ -36,6 +40,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * First release
 
+[0.3.1]: https://github.com/koopjs/koop-worker/compare/v0.3.0..v0.3.1
 [0.3.0]: https://github.com/koopjs/koop-worker/compare/v0.2.0..v0.3.0
 [0.2.0]: https://github.com/koopjs/koop-worker/compare/v0.1.1..v0.2.0
 [0.1.1]: https://github.com/koopjs/koop-worker/compare/v0.1.0..v0.1.1
