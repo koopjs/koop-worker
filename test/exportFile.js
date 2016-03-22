@@ -27,6 +27,21 @@ test('Transform data when geojson already exists', t => {
   })
 })
 
+test('Transform data into geohash', t => {
+  t.plan(2)
+  const options = {
+    id: 'f445febc447d4cb696e71ea7816d65d5',
+    layer: 0,
+    output: 'files/f445febc447d4cb696e71ea7816d65d5_0/full_0/test.geohash',
+    source: `files/f445febc447d4cb696e71ea7816d65d5_0/full_0/test.geojson`
+  }
+  exportFile(options, err => {
+    t.error(err, 'No error')
+    const geohash = JSON.parse(fs.readFileSync(fileLoc(options.output)))
+    t.equal(Object.keys(geohash).length, 100)
+  })
+})
+
 test('Transform data with a filter when geojson already exists', t => {
   t.plan(2)
   const options = {
@@ -113,8 +128,8 @@ test('Transform data from legacy geojson', t => {
 test('Teardown', t => {
   rimraf.sync('./test/output')
   rimraf.sync('./test/data/files/f445febc447d4cb696e71ea7816d65d5_0/full_0/test.csv')
+  rimraf.sync('./test/data/files/f445febc447d4cb696e71ea7816d65d5_0/full_0/test.geohash')
   rimraf.sync('./test/data/files/f445febc447d4cb696e71ea7816d65d5_0/full_1/test.csv')
-  rimraf.sync('./test/data/files/f445febc447d4cb696e71ea7816d65d5_3/full_3/test.csv')
   rimraf.sync('./test/data/files/f445febc447d4cb696e71ea7816d65d5_0/full_1')
   rimraf.sync('./test/data/files/f445febc447d4cb696e71ea7816d65d5_0/test_filter/')
   t.end()

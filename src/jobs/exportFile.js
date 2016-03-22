@@ -25,11 +25,8 @@ function exportFile (options, callback) {
     if (err) return callback(err)
     source = exists ? koop.files.createReadStream(options.source) : createCacheStream(options)
     options.tempPath = config.data_dir
-    // noop or true transform
-    const format = options.format || path.extname(options.output).replace(/\./, '')
-    const transform = format === 'geojson' ? _() : GeoXForm.createStream(format, options)
-    // filter will either be a winnow prepared query or a pass-thru stream a.k.a noop
-    const filter = options.where || options.geometry ? createFilter(options) : _()
+    const filter = createFilter(options)
+    const transform = createTransform(options)
     _(source)
     .on('log', l => log[l.level](l.message))
     .on('error', e => finish(e))
@@ -64,16 +61,58 @@ function checkSourceExists (source, callback) {
 }
 
 function createFilter (options) {
-  const winnow = Winnow.prepareQuery(options)
-  const parser = FeatureParser.parse()
+  const filtered = options.where || options.geometry
+  const isGeohash = /geohash/.test(options.output)
+  // if the query is not filtered or the output isn't geohash we just return a noop
+  if (!filtered && !isGeohash) return _()
+  // if the query is actually filtered then we use Winnow, otherwise it's a noop
+  const winnower = filtered ? Winnow.prepareQuery(options) : function (feature) { return feature }
+  // if we are cooking a geohash we need to send objects to the transform stage
+  // otherwise we just need to send a geojson stream in string forms
+  const output = isGeohash ? _() : GeoXForm.GeoJSON.createStream({json: true})
   return _.pipeline(stream => {
     return stream
-    .pipe(parser)
+    .pipe(FeatureParser.parse())
     .map(JSON.parse)
-    .map(winnow)
+    .map(winnower)
+    .flatten()
     .compact()
-    .sequence()
-    .pipe(GeoXForm.GeoJSON.createStream({json: true}))
+    .pipe(output)
+  })
+}
+
+function createTransform (options) {
+  const format = options.format || path.extname(options.output).replace(/\./, '')
+  switch (format) {
+    case 'geojson':
+      return _()
+    case 'geohash':
+      return cookGeohash()
+    default:
+      return GeoXForm.createStream(format, options)
+  }
+}
+
+function cookGeohash () {
+  return _.pipeline(stream => {
+    const geohash = {}
+    const output = _()
+    const cooker = Winnow.prepareSql('SELECT geohash(geometry, 8) as geohash FROM ?')
+    stream
+    .map(cooker)
+    .errors()
+    .each(row => {
+      if (row[0]) {
+        const hash = row[0].geohash
+        if (geohash[hash]) geohash[hash]++
+        else geohash[hash] = 1
+      }
+    })
+    .done(() => {
+      output.write(JSON.stringify(geohash))
+      output.write(_.nil)
+    })
+    return output
   })
 }
 
