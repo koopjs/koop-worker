@@ -2,6 +2,8 @@
 'use strict'
 const path = require('path')
 const config = require('config')
+const Winnow = require('winnow')
+const FeatureParser = require('feature-parser')
 
 const createKoop = require('koop')
 const koop = createKoop(config)
@@ -18,18 +20,21 @@ const _ = require('highland')
 function exportFile (options, callback) {
   let source
   let finished = false
-  // TODO ya gotta fix this d00d
-  if (!options.filePath) options.filePath = path.join('files', `/${options.id}_${options.layer || 0}`, options.key)
-  const geojson = `${options.name}.geojson`
-  const output = koop.files.createWriteStream(`${options.filePath}/${options.name}.${options.format}`)
-  koop.files.exists(options.filePath, geojson, exists => {
-    source = exists ? koop.files.createReadStream(`${options.filePath}/${geojson}`) : createCacheStream(options)
+  const output = koop.files.createWriteStream(options.output)
+  checkSourceExists(options.source, (err, exists) => {
+    if (err) return callback(err)
+    source = exists ? koop.files.createReadStream(options.source) : createCacheStream(options)
     options.tempPath = config.data_dir
     // noop or true transform
-    const transform = options.format === 'geojson' ? _() : GeoXForm.createStream(options.format, options)
-    source
+    const format = options.format || path.extname(options.output).replace(/\./, '')
+    const transform = format === 'geojson' ? _() : GeoXForm.createStream(format, options)
+    // filter will either be a winnow prepared query or a pass-thru stream a.k.a noop
+    const filter = options.where || options.geometry ? createFilter(options) : _()
+    _(source)
     .on('log', l => log[l.level](l.message))
     .on('error', e => finish(e))
+    .pipe(filter)
+    .stopOnError(e => finish(e))
     .pipe(transform)
     .on('log', l => log[l.level](l.message))
     .on('error', e => finish(e))
@@ -49,6 +54,27 @@ function exportFile (options, callback) {
     if (!finished) callback(error)
     finished = true
   }
+}
+
+function checkSourceExists (source, callback) {
+  if (!source) return callback(null, false)
+  const dirname = path.dirname(source)
+  const basename = path.basename(source)
+  koop.files.exists(dirname, basename, exists => callback(null, exists))
+}
+
+function createFilter (options) {
+  const winnow = Winnow.prepareQuery(options)
+  const parser = FeatureParser.parse()
+  return _.pipeline(stream => {
+    return stream
+    .pipe(parser)
+    .map(JSON.parse)
+    .map(winnow)
+    .compact()
+    .sequence()
+    .pipe(GeoXForm.GeoJSON.createStream({json: true}))
+  })
 }
 
 function createCacheStream (options) {

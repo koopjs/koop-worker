@@ -23,10 +23,8 @@ test('Run an exportFile job that succeeds', t => {
   const options = {
     id: 'f445febc447d4cb696e71ea7816d65d5',
     layer: 0,
-    key: 'test',
-    format: 'csv',
-    name: 'test',
-    path: './test/output',
+    output: 'files/f445febc447d4cb696e71ea7816d65d5_0/full_0/test.csv',
+    source: `files/f445febc447d4cb696e71ea7816d65d5_0/full_0/test.geojson`,
     job_id: 'job_id'
   }
   redis.subscribe('jobs', () => {
@@ -47,12 +45,10 @@ test('Run an exportFile job that succeeds', t => {
 test('Run an exportFile job that fails', t => {
   t.plan(4)
   const options = {
-    id: 'foo',
+    id: 'f445febc447d4cb696e71ea7816d65d5',
     layer: 0,
-    key: 'test',
-    format: 'csv',
-    name: 'test',
-    path: './test/output',
+    output: 'files/f445febc447d4cb696e71ea7816d65d5_3/full_3/test.csv',
+    source: `files/f445febc447d4cb696e71ea7816d65d5_3/full_3/test.geojson`,
     job_id: 'job_id2'
   }
   redis.subscribe('jobs', () => {
@@ -73,6 +69,9 @@ test('Run an exportFile job that fails', t => {
 test('Teardown', t => {
   worker.end()
   rimraf.sync('./test/data/files/f445febc447d4cb696e71ea7816d65d5_0/test_0')
+  rimraf.sync('./test/data/files/foo_0')
+  rimraf.sync('./test/data/files/f445febc447d4cb696e71ea7816d65d5_0/full_0/test.csv')
+  rimraf.sync('./test/data/files/f445febc447d4cb696e71ea7816d65d5_3')
   queue.end()
   redis.disconnect()
   t.end()

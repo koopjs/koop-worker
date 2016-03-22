@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+* Use Winnow for creating filtered files
+
+### Changed
+* ExportFile Job now takes a source (geojson filepath) and an output. The format, name and filePath parameters are no longer accepted
+
 ## [0.3.1] - 2016-03-17
 ### Changed
 * Upgrade config package

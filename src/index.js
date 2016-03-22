@@ -126,9 +126,8 @@ process.on('SIGINT', () => {
 })
 
 process.on('SIGTERM', () => {
-  running.abort(() => {
-    worker.end(() => process.exit())
-  })
+  if (running) running.abort()
+  worker.end(() => process.exit())
 })
 
 module.exports = worker
