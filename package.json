@@ -27,7 +27,7 @@
     "geo-xform": "^1.0.1",
     "highland": "3.0.0-beta.1",
     "ioredis": "^1.13.1",
-    "koop": "^3.0.0-alpha.16",
+    "koop": "^3.0.0-alpha.18",
     "koop-logger": "^1.0.0",
     "koop-pgcache": "^1.6.1",
     "lodash": "^3.10.1",
