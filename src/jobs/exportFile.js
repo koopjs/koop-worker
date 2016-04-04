@@ -19,6 +19,7 @@ const _ = require('highland')
 
 function exportFile (options, callback) {
   let source
+  let output
   let finished = false
 
   checkSourceExists(options.source, (err, exists, info) => {
@@ -29,7 +30,7 @@ function exportFile (options, callback) {
         retrieved_at: info.LastModified
       }
     }
-    const output = koop.files.createWriteStream(options.output, writeOptions)
+    output = koop.files.createWriteStream(options.output, writeOptions)
     source = exists ? koop.files.createReadStream(options.source) : createCacheStream(options)
     options.tempPath = config.data_dir
     const filter = createFilter(options)
