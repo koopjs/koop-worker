@@ -2,9 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [1.1.1] - 2016-04-04
 ### Changed
-* Metdata object is stored with files saved on S3
+* Metadata object is stored with files saved on S3
 
 ## [1.1.0] - 2016-03-22
 ### Added
@@ -59,6 +59,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * First release
 
+[1.1.1]: https://github.com/koopjs/koop-worker/compare/v1.1.1..v1.1.0
 [1.1.0]: https://github.com/koopjs/koop-worker/compare/v1.1.0..v1.0.1
 [1.0.1]: https://github.com/koopjs/koop-worker/compare/v1.0.0..v1.0.1
 [1.0.0]: https://github.com/koopjs/koop-worker/compare/v0.3.1..v1.0.0
