@@ -25,11 +25,15 @@ function exportFile (options, callback) {
   checkSourceExists(options.source, (err, exists, info) => {
     if (err) return callback(err)
     info = info || {}
-    const writeOptions = {
-      metadata: {
-        retrieved_at: info.LastModified
+    let writeOptions
+    if (info.lastModified) {
+      writeOptions = {
+        metadata: {
+          retrieved_at: info.LastModified
+        }
       }
     }
+
     output = koop.files.createWriteStream(options.output, writeOptions)
     source = exists ? koop.files.createReadStream(options.source) : createCacheStream(options)
     options.tempPath = config.data_dir

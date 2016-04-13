@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Fixed
+* Don't pass metadata object to S3 if the values are empty
+
 ## [1.1.1] - 2016-04-04
 ### Changed
 * Metadata object is stored with files saved on S3
