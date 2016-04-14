@@ -13,6 +13,13 @@ if (config.cache !== 'local') {
   const cache = require('koop-pgcache')
   koop.register(cache)
 }
+if (config.filesystem.local) {
+  const LocalFs = require('koop-localfs')
+  koop.register(LocalFs)
+} else {
+  const S3FS = require('koop-s3fs')
+  koop.register(S3FS)
+}
 
 const GeoXForm = require('geo-xform')
 const _ = require('highland')
@@ -22,8 +29,7 @@ function exportFile (options, callback) {
   let output
   let finished = false
 
-  checkSourceExists(options.source, (err, exists, info) => {
-    if (err) return callback(err)
+  checkSourceExists(options.source, (err, info) => {
     info = info || {}
     let writeOptions
     if (info.lastModified) {
@@ -34,8 +40,8 @@ function exportFile (options, callback) {
       }
     }
 
-    output = koop.files.createWriteStream(options.output, writeOptions)
-    source = exists ? koop.files.createReadStream(options.source) : createCacheStream(options)
+    output = koop.fs.createWriteStream(options.output, writeOptions)
+    source = err ? createCacheStream(options) : koop.fs.createReadStream(options.source)
     options.tempPath = config.data_dir
     const filter = createFilter(options)
     const transform = createTransform(options)
@@ -67,9 +73,7 @@ function exportFile (options, callback) {
 
 function checkSourceExists (source, callback) {
   if (!source) return callback(null, false)
-  const dirname = path.dirname(source)
-  const basename = path.basename(source)
-  koop.files.exists(dirname, basename, (exists, path, info) => callback(null, exists, info))
+  koop.fs.stat(source, callback)
 }
 
 function createFilter (options) {

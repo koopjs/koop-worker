@@ -66,9 +66,9 @@ test('Set up feature stream mock', t => {
   function createStream () {
     return _(fs.createReadStream('./test/fixtures/features.txt')).split().compact()
   }
-  function exists (a, b, callback) { callback(false) }
+  function stat (a, callback) { callback(new Error('ENOENT')) }
   exportFile.__set__('koop.cache.createStream', createStream)
-  exportFile.__set__('koop.files.exists', exists)
+  exportFile.__set__('koop.fs.stat', stat)
   t.end()
 })
 
@@ -77,7 +77,8 @@ test('Transform data when geojson does not exist', t => {
   const options = {
     id: 'test',
     layer: 0,
-    output: `files/test_0/full_0/test.csv`
+    output: `files/test_0/full_0/test.csv`,
+    source: `files/test_0/full_0/test.geojson`
   }
   exportFile(options, err => {
     t.error(err, 'No error')
@@ -96,6 +97,7 @@ test('Transform data directly into geojson', t => {
   const options = {
     id: 'test',
     layer: 1,
+    source: `files/test_0/full_1/test.geojson`,
     output: `files/test_0/full_1/test.geojson`
   }
   exportFile(options, err => {
@@ -112,6 +114,7 @@ test('Transform data from legacy geojson', t => {
   const options = {
     id: 'test',
     layer: 1,
+    source: `files/test_0/full_1/test.geojson`,
     output: `files/test_0/full_1/test.csv`
   }
   exportFile(options, err => {
