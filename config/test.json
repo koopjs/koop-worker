@@ -1,6 +1,11 @@
 {
   "data_dir": "./test/data",
   "cache": "local",
+  "filesystem": {
+    "local": {
+        "rootDir": "./test/data"
+      }
+    },
 	"queue": {
     "connection": {
       "prefix": "koop-worker-test"
