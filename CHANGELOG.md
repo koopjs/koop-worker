@@ -2,7 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.1.2] - 2016-04-013
+## [1.1.3] - 2016-04-14
+### Changed
+* Integrate koop-s3fs
+
+## [1.1.2] - 2016-04-13
 ### Fixed
 * Don't pass metadata object to S3 if the values are empty
 
@@ -63,6 +67,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * First release
 
+[1.1.3]: https://github.com/koopjs/koop-worker/compare/v1.1.3..v1.1.2
 [1.1.2]: https://github.com/koopjs/koop-worker/compare/v1.1.2..v1.1.1
 [1.1.1]: https://github.com/koopjs/koop-worker/compare/v1.1.1..v1.1.0
 [1.1.0]: https://github.com/koopjs/koop-worker/compare/v1.1.0..v1.0.1
