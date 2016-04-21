@@ -30,6 +30,7 @@
     "koop": "^3.0.0-alpha.25",
     "koop-logger": "^1.0.0",
     "koop-pgcache": "^1.6.1",
+    "koop-queue": "^0.1.0",
     "koop-s3fs": "^1.0.2",
     "lodash": "^3.10.1",
     "node-resque": "^2.0.1",

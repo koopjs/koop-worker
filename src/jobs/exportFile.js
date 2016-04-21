@@ -25,39 +25,20 @@ const GeoXForm = require('geo-xform')
 const _ = require('highland')
 
 function exportFile (options, callback) {
-  let source
   let output
   let finished = false
 
-  checkSourceExists(options.source, (err, info) => {
-    info = info || {}
-    let writeOptions
-    if (info.lastModified) {
-      writeOptions = {
-        metadata: {
-          retrieved_at: info.LastModified
-        }
-      }
-    }
-
-    output = koop.fs.createWriteStream(options.output, writeOptions)
-    source = err ? createCacheStream(options) : koop.fs.createReadStream(options.source)
+  createSource(options, (err, source, info) => {
+    if (err) return callback(err)
     options.tempPath = config.data_dir
+
     const filter = createFilter(options)
     const transform = createTransform(options)
-    _(source)
-    .on('log', l => log[l.level](l.message))
-    .on('error', e => finish(e))
-    .pipe(filter)
-    .stopOnError(e => finish(e))
-    .pipe(transform)
-    .on('log', l => log[l.level](l.message))
-    .on('error', e => finish(e))
-    .pipe(output)
-    .on('log', l => log[l.level](l.message))
-    .on('error', e => finish(e))
-    .on('finish', () => finish())
+    output = createOutput(options, info)
+
+    executeExport(source, filter, transform, output, finish)
   })
+
   return {
     abort: function abort (callback) {
       output.abort()
@@ -69,6 +50,36 @@ function exportFile (options, callback) {
     if (!finished) callback(error)
     finished = true
   }
+}
+
+function createSource (options, callback) {
+  let source
+  checkSourceExists(options.source, (err, info) => {
+    info = info || {}
+    if (err) {
+      try {
+        source = createCacheStream(options)
+      } catch (e) {
+        e.recommendRetry = true
+        return callback(e)
+      }
+    } else {
+      source = koop.fs.createReadStream(options.source)
+    }
+    callback(null, source, info)
+  })
+}
+
+function createOutput (options, info) {
+  let writeOptions
+  if (info.lastModified) {
+    writeOptions = {
+      metadata: {
+        retrieved_at: info.LastModified
+      }
+    }
+  }
+  return koop.fs.createWriteStream(options.output, writeOptions)
 }
 
 function checkSourceExists (source, callback) {
@@ -130,6 +141,24 @@ function cookGeohash () {
     })
     return output
   })
+}
+
+function executeExport (source, filter, transform, output, finish) {
+  _(source)
+  .on('log', l => log[l.level](l.message))
+  .on('error', e => finish(e))
+  .pipe(filter)
+  .stopOnError(e => finish(e))
+  .pipe(transform)
+  .on('log', l => log[l.level](l.message))
+  .on('error', e => {
+    if (e.message.match(/Unexpected token \]/i)) e.recommendRetry = true
+    finish(e)
+  })
+  .pipe(output)
+  .on('log', l => log[l.level](l.message))
+  .on('error', e => finish(e))
+  .on('finish', () => finish())
 }
 
 function createCacheStream (options) {

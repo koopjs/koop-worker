@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Changed
+* `maxRetries` is an new option for jobs
+* Only retry on some types of errors
+* Remove `plugins/retry`
+
 ## [1.1.3] - 2016-04-14
 ### Changed
 * Integrate koop-s3fs

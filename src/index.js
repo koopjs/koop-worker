@@ -8,7 +8,8 @@ const connection = config.queue.connection
 const redis = new Redis(connection)
 const Logger = require('koop-logger')
 const log = new Logger(config)
-const retry = require('./plugins/retry')
+const Queue = require('koop-queue')
+const queue = new Queue()
 
 const exportFile = require('./jobs/exportFile')
 const copy = require('./jobs/copyFile')
@@ -17,24 +18,38 @@ let running
 
 const jobs = {
   exportFile: {
-    perform: (job, done) => {
+    perform: (job, finish) => {
       const options = lodash.cloneDeep(job)
-      running = exportFile(options, done)
-    },
-    plugins: [retry],
-    pluginOptions: {
-      retry: {
-        retryLimit: 3,
-        retryDelay: 5000
-      }
+      running = exportFile(options, (err, result) => {
+        finishJob(job, err, result, finish)
+      })
     }
   },
   copyFile: {
-    perform: (job, done) => {
+    perform: (job, finish) => {
       const options = lodash.cloneDeep(job)
-      copy(options, done)
+      copy(options, (err, result) => {
+        finishJob(job, err, result, finish)
+      })
     }
   }
+}
+
+function finishJob (job, error, result, callback) {
+  if (error && shouldRetry(job, error)) {
+    // unfreeze the job object, yes I know this is dirty, so sue me
+    job = JSON.parse(JSON.stringify(job))
+    callback(null, {retried: true, error})
+  } else {
+    callback(error, result)
+  }
+}
+
+function shouldRetry (job, err) {
+  const retries = job.retries ? job.retries : 0
+  // coerce maxRetries to integer
+  const maxRetries = parseInt(job.maxRetries, 10)
+  return retries < maxRetries && err.recommendRetry
 }
 
 const queues = config.queues || ['koop']
@@ -56,10 +71,30 @@ worker.on('job', (queue, job) => {
   }, 5000)
 })
 
-worker.on('success', (queue, job) => {
-  fmtLog('Job finished', job)
-  publish('finish', job)
+// we have to force failures that need to be retried through this so we can override
+// node-resque's success fail logic
+worker.on('success', (queue, job, result) => {
+  if (result && result.retried) {
+    fmtLog('Job failed, retrying', job, result.error)
+    worker.emit('retry', job)
+  } else {
+    fmtLog('Job finished', job)
+    publish('finish', job)
+  }
   clearInterval(heartbeat)
+})
+
+worker.on('retry', (job) => {
+  fmtLog('Reenqueing: ', job)
+  publish('retry', job)
+  // unfreeze the job object
+  job = JSON.parse(JSON.stringify(job))
+  if (!job.args[0].retries) {
+    job.args[0].retries = 1
+  } else {
+    job.args[0].retries++
+  }
+  queue.enqueue(job.class, job.args)
 })
 
 worker.on('failure', (queue, job, error) => {
@@ -83,6 +118,7 @@ worker.on('start', () => log.info('Worker started'))
 worker.on('end', () => {
   log.info('Worker shutting down')
   redis.end()
+  queue.shutdown()
   clearInterval(heartbeat)
 })
 

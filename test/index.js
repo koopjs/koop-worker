@@ -14,7 +14,9 @@ const worker = require('../src')
 
 test('Set up', t => {
   queue.connect(() => {
-    t.end()
+    queue.connection.redis.del(`${connection.namespace}:queue:koop`, e => {
+      t.end()
+    })
   })
 })
 
@@ -49,7 +51,8 @@ test('Run an exportFile job that fails', t => {
     layer: 0,
     output: 'files/f445febc447d4cb696e71ea7816d65d5_3/full_3/test.csv',
     source: `files/f445febc447d4cb696e71ea7816d65d5_3/full_3/test.geojson`,
-    job_id: 'job_id2'
+    job_id: 'job_id2',
+    maxRetries: 0
   }
   redis.subscribe('jobs', () => {
     queue.enqueue('koop', 'exportFile', options)
@@ -61,6 +64,41 @@ test('Run an exportFile job that fails', t => {
         const info = JSON.parse(message)
         t.equal(info.status, 'fail', 'Fail emitted')
         t.equal(info.id, 'job_id2', 'Job id matches')
+      })
+    })
+  })
+})
+
+test('Run an exportFile that fails, retries and fails again', t => {
+  t.plan(8)
+  const options = {
+    id: 'f445febc447d4cb696e71ea7816d65d5',
+    layer: 0,
+    output: 'files/f445febc447d4cb696e71ea7816d65d5_0/full_0/test.csv',
+    source: `files/f445febc447d4cb696e71ea7816d65d5_0/full_0/empty.geojson`,
+    job_id: 'job_id3',
+    maxRetries: 1
+  }
+  redis.subscribe('jobs', () => {
+    queue.enqueue('koop', 'exportFile', options)
+    redis.once('message', (channel, message) => {
+      const info = JSON.parse(message)
+      t.equal(info.status, 'start', 'Start emitted')
+      t.equal(info.id, 'job_id3', 'Job id matches')
+      redis.once('message', (channel, message) => {
+        const info = JSON.parse(message)
+        t.equal(info.status, 'retry', 'Retry emitted')
+        t.equal(info.id, 'job_id3', 'Job id matches')
+        redis.once('message', (channel, message) => {
+          const info = JSON.parse(message)
+          t.equal(info.status, 'start', 'Job restarted')
+          t.equal(info.id, 'job_id3', 'Job id matches')
+          redis.once('message', (channel, message) => {
+            const info = JSON.parse(message)
+            t.equal(info.status, 'fail', 'Job failed')
+            t.equal(info.id, 'job_id3', 'Job id matches')
+          })
+        })
       })
     })
   })
