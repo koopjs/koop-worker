@@ -2,9 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
-### Changed
+## [1.2.0]
+### Added
 * `maxRetries` is an new option for jobs
+
+### Changed
 * Only retry on some types of errors
 * Remove `plugins/retry`
 
@@ -73,6 +75,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * First release
 
+[1.2.0]: https://github.com/koopjs/koop-worker/compare/v1.2.0..v1.1.3
 [1.1.3]: https://github.com/koopjs/koop-worker/compare/v1.1.3..v1.1.2
 [1.1.2]: https://github.com/koopjs/koop-worker/compare/v1.1.2..v1.1.1
 [1.1.1]: https://github.com/koopjs/koop-worker/compare/v1.1.1..v1.1.0
