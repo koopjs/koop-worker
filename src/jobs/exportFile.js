@@ -153,11 +153,19 @@ function executeExport (source, filter, transform, output, finish) {
   .on('log', l => log[l.level](l.message))
   .on('error', e => {
     if (e.message.match(/Unexpected token \]/i)) e.recommendRetry = true
+    // really don't know why we're getting this error so throw this to cause the worker to exit
+    if (e.message.match(/EMFILE/i)) throw e
     finish(e)
   })
   .pipe(output)
   .on('log', l => log[l.level](l.message))
-  .on('error', e => finish(e))
+  .on('error', e => {
+    // if We have an error during save to or upload to s3
+    // we should abort the transformation and try again
+    transform.abort()
+    e.recommendRetry = true
+    finish(e)
+  })
   .on('finish', () => finish())
 }
 

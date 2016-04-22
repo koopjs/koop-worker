@@ -37,8 +37,6 @@ const jobs = {
 
 function finishJob (job, error, result, callback) {
   if (error && shouldRetry(job, error)) {
-    // unfreeze the job object, yes I know this is dirty, so sue me
-    job = JSON.parse(JSON.stringify(job))
     callback(null, {retried: true, error})
   } else {
     callback(error, result)
@@ -84,8 +82,8 @@ worker.on('success', (queue, job, result) => {
   clearInterval(heartbeat)
 })
 
-worker.on('retry', (job) => {
-  fmtLog('Reenqueing: ', job)
+worker.on('retry', job => {
+  fmtLog('Reenqueing:', job)
   publish('retry', job)
   // unfreeze the job object
   job = JSON.parse(JSON.stringify(job))
@@ -105,7 +103,7 @@ worker.on('failure', (queue, job, error) => {
   // rather than potentially leak resources we just shut down
   if (error.domainThrown) {
     fmtLog('Worker failed in unknown state, shutting down', job, error)
-    worker.end(() => process.exit())
+    worker.end(() => process.exit(1))
   }
 })
 

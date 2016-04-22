@@ -2,7 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.2.0]
+## Unreleased
+### Changed
+* Abort geoxform if write to disk fails in exportFile
+* Shut down on emfile errors in exportFile
+
+## [1.2.0] - 2016-04-21
 ### Added
 * `maxRetries` is an new option for jobs
 
