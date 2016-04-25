@@ -26,7 +26,6 @@
     "feature-parser": "^1.0.1",
     "geo-xform": "^1.0.1",
     "highland": "3.0.0-beta.1",
-    "ioredis": "^1.13.1",
     "koop": "^3.0.0-alpha.25",
     "koop-logger": "^1.0.0",
     "koop-pgcache": "^1.6.1",
@@ -34,6 +33,7 @@
     "koop-s3fs": "^1.0.2",
     "lodash": "^3.10.1",
     "node-resque": "^2.0.1",
+    "redis": "^2.6.0-1",
     "winnow": "^1.0.0"
   },
   "devDependencies": {

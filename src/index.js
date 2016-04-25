@@ -3,9 +3,10 @@
 const config = require('config')
 const NR = require('node-resque')
 const lodash = require('lodash')
-const Redis = require('ioredis')
-const connection = config.queue.connection
-const redis = new Redis(connection)
+const Redis = require('redis')
+const connection = config.queue.connection || {}
+connection.pkg = 'redis'
+const redis = Redis.createClient(connection)
 const Logger = require('koop-logger')
 const log = new Logger(config)
 const Queue = require('koop-queue')
@@ -115,7 +116,7 @@ worker.on('start', () => log.info('Worker started'))
 
 worker.on('end', () => {
   log.info('Worker shutting down')
-  redis.end()
+  redis.quit()
   queue.shutdown()
   clearInterval(heartbeat)
 })

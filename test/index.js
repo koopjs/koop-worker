@@ -4,11 +4,12 @@ const test = require('tape')
 const NR = require('node-resque')
 const config = require('config')
 const rimraf = require('rimraf')
-const connection = config.queue.connection
+const connection = config.queue.connection || {}
+connection.pkg = 'redis'
 
 const queue = new NR.queue({connection}) // eslint-disable-line
-const Redis = require('ioredis')
-const redis = new Redis(connection)
+const Redis = require('redis')
+const redis = Redis.createClient(connection)
 
 const worker = require('../src')
 
@@ -111,6 +112,6 @@ test('Teardown', t => {
   rimraf.sync('./test/data/files/f445febc447d4cb696e71ea7816d65d5_0/full_0/test.csv')
   rimraf.sync('./test/data/files/f445febc447d4cb696e71ea7816d65d5_3')
   queue.end()
-  redis.disconnect()
+  redis.quit()
   t.end()
 })
