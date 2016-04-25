@@ -39,16 +39,17 @@ function exportFile (options, callback) {
     executeExport(source, filter, transform, output, finish)
   })
 
+  function finish (error) {
+    if (!finished) callback(error)
+    finished = true
+  }
+
   return {
-    abort: function abort (callback) {
+    abort: function (callback) {
       output.abort()
       finish(new Error('SIGTERM'))
       callback()
     }
-  }
-  function finish (error) {
-    if (!finished) callback(error)
-    finished = true
   }
 }
 
@@ -94,18 +95,22 @@ function createFilter (options) {
   if (!filtered && !isGeohash) return _()
   // if the query is actually filtered then we use Winnow, otherwise it's a noop
   const winnower = filtered ? Winnow.prepareQuery(options) : function (feature) { return feature }
-  // if we are cooking a geohash we need to send objects to the transform stage
-  // otherwise we just need to send a geojson stream in string forms
-  const output = isGeohash ? _() : GeoXForm.GeoJSON.createStream({json: true})
-  return _.pipeline(stream => {
+  const output = _.pipeline(stream => {
     return stream
     .pipe(FeatureParser.parse())
+    .stopOnError(e => output.emit('error', e))
     .map(JSON.parse)
+    .stopOnError(e => output.emit('error', e))
     .map(winnower)
+    .stopOnError(e => output.emit('error', e))
     .flatten()
     .compact()
-    .pipe(output)
+    // if we are cooking a geohash we need to send objects to the transform stage
+    // otherwise we just need to send a geojson stream in string forms
+    .pipe(isGeohash ? _() : GeoXForm.GeoJSON.createStream({json: true}))
   })
+
+  return output
 }
 
 function createTransform (options) {
@@ -127,7 +132,7 @@ function cookGeohash () {
     const cooker = Winnow.prepareSql('SELECT geohash(geometry, 8) as geohash FROM ?')
     stream
     .map(cooker)
-    .errors()
+    .errors((e, push, next) => next())
     .each(row => {
       if (row[0]) {
         const hash = row[0].geohash
@@ -148,9 +153,10 @@ function executeExport (source, filter, transform, output, finish) {
   .on('log', l => log[l.level](l.message))
   .on('error', e => finish(e))
   .pipe(filter)
-  .stopOnError(e => {
+  .on('error', e => {
     if (e.message.match(/Unexpected token \]/i)) e.recommendRetry = true
     finish(e)
+    output.abort()
   })
   .pipe(transform)
   .on('log', l => log[l.level](l.message))
@@ -159,6 +165,7 @@ function executeExport (source, filter, transform, output, finish) {
     // In case of a file descriptor leak shut down the worker
     if (e.message.match(/EMFILE/i)) throw e
     finish(e)
+    output.abort()
   })
   .pipe(output)
   .on('log', l => log[l.level](l.message))
@@ -168,6 +175,7 @@ function executeExport (source, filter, transform, output, finish) {
     transform.abort()
     e.recommendRetry = true
     finish(e)
+    output.abort()
   })
   .on('finish', () => finish())
 }
