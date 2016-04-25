@@ -2,9 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [1.2.2] - 2016-04-25
 ### Fixed
 * Recommend retry when geohash fails because geojson is not ready on S3
+* Handle geohash errors without throwing an exception
 
 ## [1.2.1] - 2016-04-22
 ### Changed
@@ -84,6 +85,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * First release
 
+[1.2.2]: https://github.com/koopjs/koop-worker/compare/v1.2.2..v1.2.1
 [1.2.1]: https://github.com/koopjs/koop-worker/compare/v1.2.1..v1.2.0
 [1.2.0]: https://github.com/koopjs/koop-worker/compare/v1.2.0..v1.1.3
 [1.1.3]: https://github.com/koopjs/koop-worker/compare/v1.1.3..v1.1.2
