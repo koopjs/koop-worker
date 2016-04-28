@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [1.2.3] - 2016-04-28
 ### Fixed
 * No unhandled rejections shall go uncaught
 * Do not leave temp directory lying around when the source stream fails
@@ -90,6 +90,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * First release
 
+[1.2.3]: https://github.com/koopjs/koop-worker/compare/v1.2.3..v1.2.2
 [1.2.2]: https://github.com/koopjs/koop-worker/compare/v1.2.2..v1.2.1
 [1.2.1]: https://github.com/koopjs/koop-worker/compare/v1.2.1..v1.2.0
 [1.2.0]: https://github.com/koopjs/koop-worker/compare/v1.2.0..v1.1.3
