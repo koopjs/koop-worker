@@ -24,7 +24,7 @@
   "dependencies": {
     "config": "^1.19.0",
     "feature-parser": "^1.0.1",
-    "geo-xform": "^1.0.1",
+    "geo-xform": "^1.2.2",
     "highland": "3.0.0-beta.1",
     "koop": "^3.0.0-alpha.25",
     "koop-logger": "^1.0.0",

@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Fixed
+* No unhandled rejections shall go uncaught
+* Do not leave temp directory lying around when the source stream fails
+
 ## [1.2.2] - 2016-04-25
 ### Fixed
 * Recommend retry when geohash fails because geojson is not ready on S3

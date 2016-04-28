@@ -126,7 +126,7 @@ function createTransform (options) {
 }
 
 function cookGeohash () {
-  return _.pipeline(stream => {
+  const cooker = _.pipeline(stream => {
     const geohash = {}
     const output = _()
     const cooker = Winnow.prepareSql('SELECT geohash(geometry, 8) as geohash FROM ?')
@@ -146,16 +146,24 @@ function cookGeohash () {
     })
     return output
   })
+  // noop for compatibility with the ogr transform
+  cooker.abort = () => {}
+  return cooker
 }
 
 function executeExport (source, filter, transform, output, finish) {
   _(source)
   .on('log', l => log[l.level](l.message))
-  .on('error', e => finish(e))
+  .on('error', e => {
+    finish(e)
+    transform.abort()
+    output.abort()
+  })
   .pipe(filter)
   .on('error', e => {
     if (e.message.match(/Unexpected token \]/i)) e.recommendRetry = true
     finish(e)
+    if (transform) transform.abort()
     output.abort()
   })
   .pipe(transform)
@@ -170,11 +178,9 @@ function executeExport (source, filter, transform, output, finish) {
   .pipe(output)
   .on('log', l => log[l.level](l.message))
   .on('error', e => {
-    // if We have an error during save to or upload to s3
-    // we should abort the transformation
-    transform.abort()
     e.recommendRetry = true
     finish(e)
+    transform.abort()
     output.abort()
   })
   .on('finish', () => finish())

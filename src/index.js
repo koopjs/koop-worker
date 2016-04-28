@@ -103,8 +103,9 @@ worker.on('failure', (queue, job, error) => {
   // if we've landed here an error was caught in domain
   // rather than potentially leak resources we just shut down
   if (error.domainThrown) {
-    fmtLog('Worker failed in unknown state, shutting down', job, error)
-    worker.end(() => process.exit(1))
+    fmtLog('Worker failed in unknown state, shutting down in 5 seconds', job, error)
+    worker.end()
+    setTimeout(() => process.exit(1), 5000)
   }
 })
 
@@ -156,13 +157,18 @@ function fmtError (error) {
   return error.stack.match(/.+\n.+[^\n]/)[0]
 }
 
-process.on('SIGINT', () => {
+process
+.on('SIGINT', () => {
   worker.end(() => process.exit())
 })
-
-process.on('SIGTERM', () => {
+.on('SIGTERM', () => {
   if (running) running.abort()
   worker.end(() => process.exit())
+})
+.on('unhandledRejection', (error, p) => {
+  log.error('Worker failed with unhandled rejection, shutting down in 5 seconds', error)
+  worker.end()
+  setTimeout(() => process.exit(1), 5000)
 })
 
 module.exports = worker
