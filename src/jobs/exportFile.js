@@ -7,8 +7,8 @@ const FeatureParser = require('feature-parser')
 
 const createKoop = require('koop')
 const koop = createKoop(config)
-
 const log = koop.log
+
 if (config.cache !== 'local') {
   const cache = require('koop-pgcache')
   koop.register(cache)
@@ -21,6 +21,14 @@ if (config.filesystem.local) {
   koop.register(S3FS)
 }
 
+const contentTypes = {
+  geojson: 'application/json',
+  geohash: 'application/json',
+  kml: 'application/vnd.google-earth.kml+xml',
+  csv: 'text/csv',
+  zip: 'application/octet-stream'
+}
+
 const GeoXForm = require('geo-xform')
 const _ = require('highland')
 
@@ -31,6 +39,8 @@ function exportFile (options, callback) {
   let transform
   let finished = false
   let failed = false
+
+  options.format = options.format || path.extname(options.output).replace(/\./, '')
 
   createSource(options, (err, newSource, info) => {
     if (err) return callback(err)
@@ -78,7 +88,7 @@ function exportFile (options, callback) {
     if (error && !finished) tryAbort()
     // guard against the job ending multiple times
     if (!finished) callback(error)
-    finished = true
+    // finished = true
   }
 
   function tryAbort () {
@@ -106,15 +116,12 @@ function createSource (options, callback) {
 }
 
 function createOutput (options, info) {
-  let writeOptions
   info = info || {}
-  if (info.lastModified) {
-    writeOptions = {
-      metadata: {
-        retrieved_at: info.LastModified
-      }
-    }
+  const writeOptions = {
+    ContentType: contentTypes[options.format]
   }
+  if (info.lastModified) writeOptions.metadata = {retrieved_at: info.LastModified }
+
   return koop.fs.createWriteStream(options.output, writeOptions)
 }
 
@@ -149,14 +156,13 @@ function createFilter (options) {
 }
 
 function createTransform (options) {
-  const format = options.format || path.extname(options.output).replace(/\./, '')
-  switch (format) {
+  switch (options.format) {
     case 'geojson':
       return _()
     case 'geohash':
       return cookGeohash()
     default:
-      return GeoXForm.createStream(format, options)
+      return GeoXForm.createStream(options.format, options)
   }
 }
 
