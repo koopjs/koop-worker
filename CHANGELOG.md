@@ -2,12 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [1.2.4]
 ### Changed
-* Jobs that run for more than an hour are aborted
+* Jobs running over 30 minutes are cancelled
 
 ### Fixed
-* Catch errors when the source fails in ExportFile and recommend a retry 
+* Catch ECONNRESET error from source in export stream
 
 ## [1.2.3] - 2016-04-28
 ### Fixed
@@ -97,6 +97,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * First release
 
+[1.2.4]: https://github.com/koopjs/koop-worker/compare/v1.2.4..v1.2.3
 [1.2.3]: https://github.com/koopjs/koop-worker/compare/v1.2.3..v1.2.2
 [1.2.2]: https://github.com/koopjs/koop-worker/compare/v1.2.2..v1.2.1
 [1.2.1]: https://github.com/koopjs/koop-worker/compare/v1.2.1..v1.2.0
