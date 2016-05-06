@@ -2,9 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.2.4]
+## [1.2.4] - 2016-05-06
 ### Changed
-* Jobs running over 30 minutes are cancelled
+* Jobs running over 60 minutes are cancelled
 
 ### Fixed
 * Catch ECONNRESET error from source in export stream
