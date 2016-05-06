@@ -50,8 +50,8 @@ test('Run an exportFile job that fails', t => {
   const options = {
     id: 'f445febc447d4cb696e71ea7816d65d5',
     layer: 0,
-    output: 'files/f445febc447d4cb696e71ea7816d65d5_3/full_3/test.csv',
-    source: `files/f445febc447d4cb696e71ea7816d65d5_3/full_3/test.geojson`,
+    output: 'files/f445febc447d4cb696e71ea7816d65d5_0/full_0/test.csv',
+    source: `files/f445febc447d4cb696e71ea7816d65d5_0/full_0/empty.geojson`,
     job_id: 'job_id2',
     maxRetries: 0
   }

@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Changed
+* Jobs that run for more than an hour are aborted
+
+### Fixed
+* Catch errors when the source fails in ExportFile and recommend a retry 
+
 ## [1.2.3] - 2016-04-28
 ### Fixed
 * No unhandled rejections shall go uncaught

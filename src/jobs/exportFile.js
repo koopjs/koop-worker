@@ -26,53 +26,88 @@ const _ = require('highland')
 
 function exportFile (options, callback) {
   let output
+  let source
+  let filter
+  let transform
   let finished = false
+  let failed = false
 
-  createSource(options, (err, source, info) => {
+  createSource(options, (err, newSource, info) => {
     if (err) return callback(err)
+    filter = createFilter(options)
+    transform = createTransform(options)
+    output = createOutput(options, info)
+    source = newSource
     options.tempPath = config.data_dir
 
-    const filter = createFilter(options)
-    const transform = createTransform(options)
-    output = createOutput(options, info)
-
-    executeExport(source, filter, transform, output, finish)
+    _(source)
+    .on('log', l => log[l.level](l.message))
+    .on('error', e => {
+      failed = true
+      e.recommendRetry = true
+      finish(e)
+    })
+    .pipe(filter)
+    .on('error', e => {
+      failed = true
+      if (e.message.match(/Unexpected token \]/i)) e.recommendRetry = true
+      finish(e)
+    })
+    .pipe(transform)
+    .on('log', l => log[l.level](l.message))
+    .on('error', e => {
+      failed = true
+      if (e.message.match(/Unexpected token \]/i)) e.recommendRetry = true
+      finish(e)
+    })
+    .pipe(output)
+    .on('log', l => log[l.level](l.message))
+    .on('error', e => {
+      failed = true
+      e.recommendRetry = true
+      finish(e)
+    })
+    .on('finish', () => {
+      // TODO figure out why finish is firing on failures
+      if (!failed) finish()
+    })
   })
 
   function finish (error) {
+    // Make sure to clean up anything that is running if the jobs fails
+    if (error && !finished) tryAbort()
+    // guard against the job ending multiple times
     if (!finished) callback(error)
     finished = true
   }
 
+  function tryAbort () {
+    [source, filter, transform, output].forEach(x => {
+      try {
+        if (x && x.abort) x.abort()
+      } catch (e) {
+        log.error(e)
+      }
+    })
+  }
+
   return {
-    abort: function (callback) {
-      output.abort()
-      finish(new Error('SIGTERM'))
-      callback()
+    abort: function (message) {
+      finish(new Error(message))
     }
   }
 }
 
 function createSource (options, callback) {
-  let source
   checkSourceExists(options.source, (err, info) => {
-    info = info || {}
-    if (err) {
-      try {
-        source = createCacheStream(options)
-      } catch (e) {
-        e.recommendRetry = true
-        return callback(e)
-      }
-    } else {
-      source = koop.fs.createReadStream(options.source)
-    }
-    callback(null, source, info)
+    if (err) callback(null, createCacheStream(options))
+    else callback(null, koop.fs.createReadStream(options.source), info)
   })
 }
 
 function createOutput (options, info) {
   let writeOptions
+  info = info || {}
   if (info.lastModified) {
     writeOptions = {
       metadata: {
@@ -151,41 +186,6 @@ function cookGeohash () {
   return cooker
 }
 
-function executeExport (source, filter, transform, output, finish) {
-  _(source)
-  .on('log', l => log[l.level](l.message))
-  .on('error', e => {
-    finish(e)
-    transform.abort()
-    output.abort()
-  })
-  .pipe(filter)
-  .on('error', e => {
-    if (e.message.match(/Unexpected token \]/i)) e.recommendRetry = true
-    finish(e)
-    if (transform) transform.abort()
-    output.abort()
-  })
-  .pipe(transform)
-  .on('log', l => log[l.level](l.message))
-  .on('error', e => {
-    if (e.message.match(/Unexpected token \]/i)) e.recommendRetry = true
-    // In case of a file descriptor leak shut down the worker
-    if (e.message.match(/EMFILE/i)) throw e
-    finish(e)
-    output.abort()
-  })
-  .pipe(output)
-  .on('log', l => log[l.level](l.message))
-  .on('error', e => {
-    e.recommendRetry = true
-    finish(e)
-    transform.abort()
-    output.abort()
-  })
-  .on('finish', () => finish())
-}
-
 function createCacheStream (options) {
   const output = _()
   koop.cache.createStream(options.table, options)
@@ -195,6 +195,7 @@ function createCacheStream (options) {
   .on('log', l => log[l.level](l.message))
   .on('error', e => output.emit('error', e))
   .pipe(output)
+
   return output
 }
 

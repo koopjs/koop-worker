@@ -120,6 +120,7 @@ worker.on('end', () => {
   redis.quit()
   queue.shutdown()
   clearInterval(heartbeat)
+  clearInterval(checker)
 })
 
 function publish (status, job, error) {
@@ -159,10 +160,11 @@ function fmtError (error) {
 
 process
 .on('SIGINT', () => {
+  if (running) running.abort('SIGTERM')
   worker.end(() => process.exit())
 })
 .on('SIGTERM', () => {
-  if (running) running.abort()
+  if (running) running.abort('SIGTERM')
   worker.end(() => process.exit())
 })
 .on('unhandledRejection', (error, p) => {
@@ -170,5 +172,12 @@ process
   worker.end()
   setTimeout(() => process.exit(1), 5000)
 })
+
+const checker = setInterval(() => {
+  if (running && running.abort) {
+    const tooLong = 60 * 60 * 1000
+    if (Date.now() - running.start > tooLong) running.abort('Job aborted, took too long')
+  }
+}, 5 * 60 * 1000)
 
 module.exports = worker
