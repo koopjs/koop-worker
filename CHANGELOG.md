@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.6] - 2016-05-12
+### Fixed
+Uncommented line causing multiple callbacks to fire at the end of export jobs
+
 ## [1.2.5] - 2016-05-06
 ### Changed
 * Set the content type for files saved on s3
@@ -101,6 +105,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * First release
 
+[1.2.6]: https://github.com/koopjs/koop-worker/compare/v1.2.6..v1.2.5
 [1.2.5]: https://github.com/koopjs/koop-worker/compare/v1.2.5..v1.2.4
 [1.2.4]: https://github.com/koopjs/koop-worker/compare/v1.2.4..v1.2.3
 [1.2.3]: https://github.com/koopjs/koop-worker/compare/v1.2.3..v1.2.2
