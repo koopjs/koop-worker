@@ -88,7 +88,7 @@ function exportFile (options, callback) {
     if (error && !finished) tryAbort()
     // guard against the job ending multiple times
     if (!finished) callback(error)
-    // finished = true
+    finished = true
   }
 
   function tryAbort () {
