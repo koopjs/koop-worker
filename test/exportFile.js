@@ -97,31 +97,6 @@ test('Fail gracefully on csv', t => {
   })
 })
 
-test('Set up geojson stream mock', t => {
-  function createStream () {
-    const emitter = _()
-    process.nextTick(() => emitter.emit('error', new Error('Readstream failed')))
-    return emitter
-  }
-  function stat (a, callback) { callback(null, {}) }
-  exportFile.__set__('koop.fs.createReadStream', createStream)
-  exportFile.__set__('koop.fs.stat', stat)
-  t.end()
-})
-
-test('Fail gracefully when the source fails', t => {
-  t.plan(1)
-  const options = {
-    id: 'f445febc447d4cb696e71ea7816d65d5',
-    layer: 0,
-    output: 'files/f445febc447d4cb696e71ea7816d65d5_0/full_0/test.csv',
-    source: `files/f445febc447d4cb696e71ea7816d65d5_0/full_0/empty.geojson`
-  }
-  exportFile(options, err => {
-    t.ok(err, 'Error caught in expected place')
-  })
-})
-
 test('Set up feature stream mock', t => {
   function createStream () {
     return _(fs.createReadStream('./test/fixtures/features.txt')).split().compact()
@@ -185,6 +160,32 @@ test('Transform data from legacy geojson', t => {
     .compact()
     .each(r => rows.push(r))
     .done(() => t.equal(rows.length, 101), 'CSV has all expected features')
+  })
+})
+
+test('Set up geojson stream mock that fails immediately', t => {
+  function emitError (options, callback) {
+    const emitter = _()
+
+    callback(null, emitter)
+    process.nextTick(() => emitter.emit('error', new Error('ECONNRESET')))
+  }
+  function stat (a, callback) { callback(null, {}) }
+  exportFile.__set__('createSource', emitError)
+  exportFile.__set__('koop.fs.stat', stat)
+  t.end()
+})
+
+test('Fail gracefully when the source fails', t => {
+  t.plan(1)
+  const options = {
+    id: 'f445febc447d4cb696e71ea7816d65d5',
+    layer: 0,
+    output: 'files/f445febc447d4cb696e71ea7816d65d5_0/full_0/test.csv',
+    source: `files/f445febc447d4cb696e71ea7816d65d5_0/full_0/empty.geojson`
+  }
+  exportFile(options, err => {
+    t.ok(err, 'Error caught in expected place')
   })
 })
 

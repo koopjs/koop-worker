@@ -39,6 +39,7 @@ function exportFile (options, callback) {
   let transform
   let finished = false
   let failed = false
+  options.tempPath = config.data_dir
 
   options.format = options.format || path.extname(options.output).replace(/\./, '')
 
@@ -48,9 +49,8 @@ function exportFile (options, callback) {
     transform = createTransform(options)
     output = createOutput(options, info)
     source = newSource
-    options.tempPath = config.data_dir
 
-    _(source)
+    source
     .on('log', l => log[l.level](l.message))
     .on('error', e => {
       failed = true
@@ -111,16 +111,14 @@ function exportFile (options, callback) {
 function createSource (options, callback) {
   checkSourceExists(options.source, (err, info) => {
     if (err) callback(null, createCacheStream(options))
-    else callback(null, koop.fs.createReadStream(options.source), info)
+    else callback(null, createFileStream(options), info)
   })
 }
 
 function createOutput (options, info) {
   info = info || {}
-  const writeOptions = {
-    ContentType: contentTypes[options.format]
-  }
-  if (info.lastModified) writeOptions.metadata = {retrieved_at: info.LastModified }
+  const writeOptions = { ContentType: contentTypes[options.format] }
+  if (info.lastModified) writeOptions.metadata = { retrieved_at: info.LastModified }
 
   return koop.fs.createWriteStream(options.output, writeOptions)
 }
@@ -198,6 +196,16 @@ function createCacheStream (options) {
   .on('log', l => log[l.level](l.message))
   .on('error', e => output.emit('error', e))
   .pipe(GeoXForm.GeoJSON.createStream())
+  .on('log', l => log[l.level](l.message))
+  .on('error', e => output.emit('error', e))
+  .pipe(output)
+
+  return output
+}
+
+function createFileStream (options) {
+  const output = _()
+  koop.fs.createReadStream(options.source)
   .on('log', l => log[l.level](l.message))
   .on('error', e => output.emit('error', e))
   .pipe(output)
