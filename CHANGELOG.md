@@ -2,10 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [1.2.7] - 2016-05-13
 ### Fixed
 * Files are written into the correct temporary directory
-
 
 ## [1.2.6] - 2016-05-12
 ### Fixed
