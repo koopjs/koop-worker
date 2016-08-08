@@ -168,7 +168,7 @@ function cookGeohash () {
   const cooker = _.pipeline(stream => {
     const geohash = {}
     const output = _()
-    const cooker = Winnow.prepareSql('SELECT geohash(geometry, 8) as geohash FROM ?')
+    const cooker = Winnow.prepareSql('SELECT geohash(geometry, 7) as geohash FROM ?')
     stream
     .map(cooker)
     .errors((e, push, next) => next())

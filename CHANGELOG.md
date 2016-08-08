@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Changed
+* Reduce geohash precision to 7
+
 ## [1.2.7] - 2016-05-13
 ### Fixed
 * Files are written into the correct temporary directory
