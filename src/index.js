@@ -40,7 +40,15 @@ function finishJob (job, error, result, callback) {
   if (error && shouldRetry(job, error)) {
     callback(null, {retried: true, error})
   } else {
-    callback(error, result)
+    if (error && error.failedQueue) {
+      return callback(error)
+    } else if (error) {
+      publish('fail', job, error)
+      callback(null)
+    } else {
+      callback(null, result)
+    }
+
   }
 }
 

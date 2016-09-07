@@ -60,14 +60,22 @@ function exportFile (options, callback) {
     .pipe(filter)
     .on('error', e => {
       failed = true
-      if (e.message.match(/Unexpected token \]/i)) e.recommendRetry = true
+      if (e.message.match(/Unexpected token \]/i)) {
+        e.failedQueue = false
+        e.recommendRetry = true
+      }
       finish(e)
     })
     .pipe(transform)
     .on('log', l => log[l.level](l.message))
     .on('error', e => {
       failed = true
-      if (e.message.match(/Unexpected token \]/i)) e.recommendRetry = true
+      if (e.message.match(/Unexpected token \]/i)) {
+        e.recommendRetry = true
+        e.failedQueue = false
+      } else if (e.message.match(/2GB file size/i)) {
+        e.failedQueue = false
+      }
       finish(e)
     })
     .pipe(output)
@@ -165,9 +173,11 @@ function createTransform (options) {
 }
 
 function cookGeohash () {
+  let aborted
   const cooker = _.pipeline(stream => {
     const geohash = {}
     const output = _()
+    output.on('finish', e => console.log('ended'))
     const cooker = Winnow.prepareSql('SELECT geohash(geometry, 7) as geohash FROM ?')
     stream
     .map(cooker)
@@ -180,13 +190,17 @@ function cookGeohash () {
       }
     })
     .done(() => {
-      output.write(JSON.stringify(geohash))
-      output.write(_.nil)
+      if (!aborted) {
+        output.write(JSON.stringify(geohash))
+        output.write(_.nil)
+      }
     })
     return output
   })
   // noop for compatibility with the ogr transform
-  cooker.abort = () => {}
+  cooker.abort = () => {
+    aborted = true
+  }
   return cooker
 }
 
