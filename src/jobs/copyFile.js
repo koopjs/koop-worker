@@ -2,13 +2,13 @@ const config = require('config')
 const createKoop = require('koop')
 const koop = createKoop(config)
 
-if (config.filesystem.local) {
-  const LocalFs = require('koop-localfs')
-  koop.register(LocalFs)
+let fs
+if (config.filesystem.s3 && config.filesystem.s3.bucket) {
+  fs = require('koop-s3fs')
 } else {
-  const S3FS = require('koop-s3fs')
-  koop.register(S3FS)
+  fs = require('koop-localfs')
 }
+koop.register(fs)
 
 function copyFile (options, done) {
   koop.fs.copy(options, err => done(err))

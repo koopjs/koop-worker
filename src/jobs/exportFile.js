@@ -13,13 +13,13 @@ if (config.cache !== 'local') {
   const cache = require('koop-pgcache')
   koop.register(cache)
 }
-if (config.filesystem.local) {
-  const LocalFs = require('koop-localfs')
-  koop.register(LocalFs)
+let fs
+if (config.filesystem.s3 && config.filesystem.s3.bucket) {
+  fs = require('koop-s3fs')
 } else {
-  const S3FS = require('koop-s3fs')
-  koop.register(S3FS)
+  fs = require('koop-localfs')
 }
+koop.register(fs)
 
 const contentTypes = {
   geojson: 'application/json',
