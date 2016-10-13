@@ -1,3 +1,4 @@
+'use strict'
 const config = require('config')
 const createKoop = require('koop')
 const koop = createKoop(config)
