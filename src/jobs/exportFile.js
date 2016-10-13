@@ -118,7 +118,7 @@ function createSource (options, callback) {
 function createOutput (options, info) {
   info = info || {}
   const writeOptions = { ContentType: contentTypes[options.format] }
-  if (info.lastModified) writeOptions.metadata = { retrieved_at: info.LastModified }
+  if (info.mtime) writeOptions.Metadata = { retrieved_at: info.mtime.toString() }
 
   return koop.fs.createWriteStream(options.output, writeOptions)
 }

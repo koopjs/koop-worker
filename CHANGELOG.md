@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 * Reduce geohash precision to 7
 
+### Fixed
+* Retrieval time is written to s3 metadata
+
 ## [1.2.7] - 2016-05-13
 ### Fixed
 * Files are written into the correct temporary directory
