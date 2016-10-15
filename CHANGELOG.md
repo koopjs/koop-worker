@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [1.2.8] - 2016-10-15
 ### Changed
 * Reduce geohash precision to 7
 
@@ -116,6 +116,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * First release
 
+[1.2.8]: https://github.com/koopjs/koop-worker/compare/v1.2.8..v1.2.7
+[1.2.7]: https://github.com/koopjs/koop-worker/compare/v1.2.7..v1.2.6
 [1.2.6]: https://github.com/koopjs/koop-worker/compare/v1.2.6..v1.2.5
 [1.2.5]: https://github.com/koopjs/koop-worker/compare/v1.2.5..v1.2.4
 [1.2.4]: https://github.com/koopjs/koop-worker/compare/v1.2.4..v1.2.3
