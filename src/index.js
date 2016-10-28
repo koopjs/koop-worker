@@ -37,6 +37,7 @@ const jobs = {
 }
 
 function finishJob (job, error, result, callback) {
+  clearInterval(heartbeat)
   if (error && shouldRetry(job, error)) {
     callback(null, {retried: true, error})
   } else {
@@ -80,7 +81,6 @@ worker.on('success', (queue, job, result) => {
     fmtLog('Job finished', job)
     publish('finish', job)
   }
-  clearInterval(heartbeat)
 })
 
 worker.on('retry', job => {
@@ -98,7 +98,6 @@ worker.on('retry', job => {
 
 worker.on('failure', (queue, job, error) => {
   if (!error.domainThrow) fmtLog('Job failed', job, error)
-  clearInterval(heartbeat)
   publish('fail', job, error)
   // if we've landed here an error was caught in domain
   // rather than potentially leak resources we just shut down
@@ -110,6 +109,7 @@ worker.on('failure', (queue, job, error) => {
 })
 
 worker.on('error', (queue, job, error) => {
+  clearInterval(heartbeat)
   fmtLog('Worker emitted error', job, error)
 })
 

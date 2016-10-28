@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Fixed
+* Ensure heartbeat is no sent after job completes
+
 ## [1.2.8] - 2016-10-15
 ### Changed
 * Reduce geohash precision to 7
