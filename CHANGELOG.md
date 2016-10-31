@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.2.9] - 2016-10-29
 ### Fixed
-* Ensure heartbeat is no sent after job completes
+* Ensure heartbeat is not sent after job completes
 
 ## [1.2.8] - 2016-10-15
 ### Changed
