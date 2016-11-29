@@ -93,6 +93,7 @@ worker.on('retry', job => {
   } else {
     job.args[0].retries++
   }
+  job.args.delay = 30000
   queue.enqueue(job.class, job.args)
 })
 
