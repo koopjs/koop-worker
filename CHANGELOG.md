@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [1.2.10] - 2016-11-29
 ### Changed
 * Delay 30 seconds before retrying a job
 
@@ -124,6 +124,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * First release
 
+[1.2.10]: https://github.com/koopjs/koop-worker/compare/v1.2.10..v1.2.9
 [1.2.9]: https://github.com/koopjs/koop-worker/compare/v1.2.9..v1.2.8
 [1.2.8]: https://github.com/koopjs/koop-worker/compare/v1.2.8..v1.2.7
 [1.2.7]: https://github.com/koopjs/koop-worker/compare/v1.2.7..v1.2.6
