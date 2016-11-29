@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Changed
+* Delay 30 seconds before retrying a job
+
 ## [1.2.9] - 2016-10-29
 ### Fixed
 * Ensure heartbeat is no sent after job completes
