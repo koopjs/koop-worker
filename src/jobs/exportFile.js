@@ -4,20 +4,8 @@ const path = require('path')
 const config = require('config')
 const Winnow = require('winnow')
 const FeatureParser = require('feature-parser')
-
-const Koop = require('koop')
-const koop = new Koop(config)
+const koop = require('../lib/initKoop')()
 const log = koop.log
-
-if (config.cache !== 'local') {
-  const cache = require('koop-pgcache')
-  koop.register(cache)
-}
-
-if (config.filesystem.s3 && config.filesystem.s3.bucket) {
-  const fs = require('koop-s3fs')
-  koop.register(fs)
-}
 
 const contentTypes = {
   geojson: 'application/json',
