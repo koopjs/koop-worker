@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Changed
+* Compatible with Koop 3.x latest
+
 ## [1.2.10] - 2016-11-29
 ### Changed
 * Delay 30 seconds before retrying a job

@@ -5,21 +5,19 @@ const config = require('config')
 const Winnow = require('winnow')
 const FeatureParser = require('feature-parser')
 
-const createKoop = require('koop')
-const koop = createKoop(config)
+const Koop = require('koop')
+const koop = new Koop(config)
 const log = koop.log
 
 if (config.cache !== 'local') {
   const cache = require('koop-pgcache')
   koop.register(cache)
 }
-let fs
+
 if (config.filesystem.s3 && config.filesystem.s3.bucket) {
-  fs = require('koop-s3fs')
-} else {
-  fs = require('koop-localfs')
+  const fs = require('koop-s3fs')
+  koop.register(fs)
 }
-koop.register(fs)
 
 const contentTypes = {
   geojson: 'application/json',
