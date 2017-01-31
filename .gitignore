@@ -6,3 +6,4 @@ test/data/files/test_*
 test/data/files/f445febc447d4cb696e71ea7816d65d5_0/test/test.csv
 .vscode
 config/default.json
+lib/
