@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [1.3.0] - 2017-01-31
 ### Changed
 * Compatible with Koop 3.x latest
 
@@ -128,6 +128,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * First release
 
+[1.3.0]: https://github.com/koopjs/koop-worker/compare/v1.3.0..v1.2.10
 [1.2.10]: https://github.com/koopjs/koop-worker/compare/v1.2.10..v1.2.9
 [1.2.9]: https://github.com/koopjs/koop-worker/compare/v1.2.9..v1.2.8
 [1.2.8]: https://github.com/koopjs/koop-worker/compare/v1.2.8..v1.2.7
