@@ -123,7 +123,10 @@ function createFilter (options) {
   const filterOptions = {
     where: options.where,
     geometry: options.geometry,
-    esriFields: options.fields
+    esriFields: options.fields,
+    inSR: options.inSR,
+    limit: options.limit,
+    offset: options.offset
   }
   const winnower = filtered ? Winnow.prepareQuery(filterOptions) : function (feature) { return feature }
   const output = _.pipeline(stream => {
