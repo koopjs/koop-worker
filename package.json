@@ -1,6 +1,6 @@
 {
   "name": "koop-worker",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Worker for Koop jobs",
   "main": "index.js",
   "scripts": {
