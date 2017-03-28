@@ -120,7 +120,12 @@ function createFilter (options) {
   // if the query is not filtered or the output isn't geohash we just return a noop
   if (!filtered && !isGeohash) return _()
   // if the query is actually filtered then we use Winnow, otherwise it's a noop
-  const winnower = filtered ? Winnow.prepareQuery(options) : function (feature) { return feature }
+  const filterOptions = {
+    where: options.where,
+    geometry: options.geometry,
+    esriFields: options.fields
+  }
+  const winnower = filtered ? Winnow.prepareQuery(filterOptions) : function (feature) { return feature }
   const output = _.pipeline(stream => {
     return stream
     .pipe(FeatureParser.parse())

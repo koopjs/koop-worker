@@ -26,7 +26,7 @@
     "feature-parser": "^1.0.1",
     "geo-xform": "^1.2.2",
     "highland": "3.0.0-beta.2",
-    "koop": "^3.0.0-alpha.28",
+    "koop": "3.0.0-alpha.28",
     "koop-logger": "^1.0.0",
     "koop-pgcache": "^1.6.1",
     "koop-queue": "^0.1.0",
