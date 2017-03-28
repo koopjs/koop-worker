@@ -37,6 +37,7 @@
     "winnow": "^1.0.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.24.0",
     "babel-preset-es2015": "^6.3.13",
     "koop-localfs": "^1.0.0",
     "rewire": "^2.5.1",
