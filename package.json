@@ -1,5 +1,5 @@
 {
-  "name": "koop-worker",
+  "name": "@koopjs/worker",
   "version": "1.3.3",
   "description": "Worker for Koop jobs",
   "main": "dist/index.js",
