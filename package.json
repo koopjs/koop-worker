@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/koopjs/koop-worker#readme",
   "dependencies": {
+    "@koopjs/filesystem-s3": "^1.2.3",
     "config": "^1.19.0",
     "feature-parser": "^1.0.1",
     "geo-xform": "^1.2.2",
@@ -30,7 +31,6 @@
     "koop-logger": "^1.0.0",
     "koop-pgcache": "^1.6.1",
     "koop-queue": "^0.1.0",
-    "koop-s3fs": "^1.0.2",
     "lodash": "^3.10.1",
     "node-resque": "^2.0.1",
     "redis": "^2.6.0-1",

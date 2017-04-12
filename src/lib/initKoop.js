@@ -10,7 +10,7 @@ module.exports = function () {
   }
 
   if (config.filesystem.s3 && config.filesystem.s3.bucket) {
-    const fs = require('koop-s3fs')
+    const fs = require('@koopjs/filesystem-s3')
     koop.register(fs)
   }
   return koop
