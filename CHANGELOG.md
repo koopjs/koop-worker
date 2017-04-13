@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Fixed
+* Catch error in preparing query during export
+
 ## [1.3.4] - 2017-04-13
 ### Changed
 * Upgrade required version of @koopjs/filesystem-s3

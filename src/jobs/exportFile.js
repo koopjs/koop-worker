@@ -31,7 +31,8 @@ function exportFile (options, callback) {
 
   createSource(options, (err, newSource, info) => {
     if (err) return callback(err)
-    filter = createFilter(options)
+    // using this anti-pattern here because I don't want to wrap the pipline in createFilter in a try/catch
+    filter = createFilter(options, e => { return finish(e) })
     transform = createTransform(options)
     output = createOutput(options, info)
     source = newSource
@@ -114,7 +115,7 @@ function checkSourceExists (source, callback) {
   koop.fs.stat(source, callback)
 }
 
-function createFilter (options) {
+function createFilter (options, callback) {
   const filtered = options.where || options.geometry
   const isGeohash = /geohash/.test(options.output)
   // if the query is not filtered or the output isn't geohash we just return a noop
@@ -128,7 +129,12 @@ function createFilter (options) {
     limit: options.limit,
     offset: options.offset
   }
-  const winnower = filtered ? Winnow.prepareQuery(filterOptions) : function (feature) { return feature }
+  let winnower
+  try {
+    winnower = filtered ? Winnow.prepareQuery(filterOptions) : function (feature) { return feature }
+  } catch (e) {
+    return callback(e)
+  }
   const output = _.pipeline(stream => {
     return stream
     .pipe(FeatureParser.parse())
