@@ -9,7 +9,7 @@
 - edit configs
 - `require('koop-worker')`
 
-[npm-img]: https://img.shields.io/npm/v/koopjs/worker.svg?style=flat-square
-[npm-url]: https://www.npmjs.com/package/koopjs/worker
-[travis-image]: https://img.shields.io/travis/koopjs/koopjs/koop-worker.svg?style=flat-square
+[npm-img]: https://img.shields.io/npm/v/@koopjs/worker.svg?style=flat-square
+[npm-url]: https://www.npmjs.com/package/@koopjs/worker
+[travis-image]: https://img.shields.io/travis/koopjs/koop-worker.svg?style=flat-square
 [travis-url]: https://travis-ci.org/koopjs/koop-worker
