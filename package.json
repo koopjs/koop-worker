@@ -1,6 +1,6 @@
 {
   "name": "@koopjs/worker",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "Worker for Koop jobs",
   "main": "dist/index.js",
   "scripts": {
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/koopjs/koop-worker#readme",
   "dependencies": {
-    "@koopjs/filesystem-s3": "^1.2.3",
+    "@koopjs/filesystem-s3": "^1.2.4",
     "config": "^1.19.0",
     "feature-parser": "^1.0.1",
     "geo-xform": "^1.2.2",
