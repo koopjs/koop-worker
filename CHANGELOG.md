@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [1.3.5] - 2017-04-13
 ### Fixed
 * Catch error in preparing query during export
 
@@ -148,6 +148,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * First release
 
+[1.3.5]: https://github.com/koopjs/koop-worker/compare/v1.3.4..v1.3.5
 [1.3.4]: https://github.com/koopjs/koop-worker/compare/v1.3.4..v1.3.3
 [1.3.3]: https://github.com/koopjs/koop-worker/compare/v1.3.2..v1.3.3
 [1.3.2]: https://github.com/koopjs/koop-worker/compare/v1.3.2..v1.3.1
