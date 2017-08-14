@@ -1,4 +1,6 @@
 # Koop-Worker
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/koopjs/koop-worker.svg)](https://greenkeeper.io/)
 * A worker bot to run jobs for Koop
 
 [![npm][npm-img]][npm-url]
